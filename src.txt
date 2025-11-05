@@ -1,0 +1,37 @@
+import java.util.*;
+
+class Solution {
+    public int findMaximizedCapital(int k, int w, int[] profits, int[] capital) {
+        int n = profits.length;
+        int[][] projects = new int[n][2];
+        
+        // Step 1: Combine capital and profit
+        for (int i = 0; i < n; i++) {
+            projects[i][0] = capital[i];
+            projects[i][1] = profits[i];
+        }
+        
+        // Step 2: Sort projects by required capital
+        Arrays.sort(projects, (a, b) -> a[0] - b[0]);
+        
+        // Step 3: Max-heap for profits
+        PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
+        
+        int index = 0;
+        for (int i = 0; i < k; i++) {
+            // Add all projects affordable with current capital
+            while (index < n && projects[index][0] <= w) {
+                maxHeap.add(projects[index][1]);
+                index++;
+            }
+            
+            // If no project is affordable, break
+            if (maxHeap.isEmpty()) break;
+            
+            // Pick the most profitable project
+            w += maxHeap.poll();
+        }
+        
+        return w;
+    }
+}
